@@ -4,23 +4,9 @@
 <html>
 <meta charset="utf-8">
 
-<!-- Example based on http://bl.ocks.org/mbostock/3887118 -->
-<!-- Tooltip example from http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html -->
-
 <style>
 body {
   font: 11px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.dot {
-  stroke: #000;
 }
 
 </style>
@@ -58,8 +44,6 @@ svg.append("rect")
 
 // load data
 d3.csv("tsne.csv", function(data) {
-
-  // don't want dots overlapping axis, so add in buffer to data domain
 
   var elem = g.selectAll("g").data(data)
 
