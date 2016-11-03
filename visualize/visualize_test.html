@@ -1,5 +1,6 @@
 
 <!DOCTYPE html>
+<!-- Run this to make it work http-server C:\Users\maxob\Documents\GitHub\zi-space\visualize -->
 <html>
 <meta charset="utf-8">
 
@@ -37,6 +38,14 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+function convertX(x) {
+  return   width / 200  * ( 100 + parseFloat(x))
+}
+
+function convertY(y) {
+  return height / 200 * (100 + parseFloat(y)) + margin.top
+}
+
 /* 
  * value accessor - returns the value to encode for a given data object.
  * scale - maps value to a visual display encoding, such as a pixel position.
@@ -45,20 +54,20 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
  */ 
 
 // setup x 
-var xValue = function(d) { return d.Calories;}, // data -> value
-    xScale = d3.scale.linear().range([0, width]), // value -> display
-    xMap = function(d) { return xScale(xValue(d));}, // data -> display
-    xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+// var xValue = function(d) { return d.Calories;}, // data -> value
+//     xScale = d3.scale.linear().range([0, width]), // value -> display
+//     xMap = function(d) { return xScale(xValue(d));}, // data -> display
+//     xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-// setup y
-var yValue = function(d) { return d["Protein (g)"];}, // data -> value
-    yScale = d3.scale.linear().range([height, 0]), // value -> display
-    yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    yAxis = d3.svg.axis().scale(yScale).orient("left");
+// // setup y
+// var yValue = function(d) { return d["Protein (g)"];}, // data -> value
+//     yScale = d3.scale.linear().range([height, 0]), // value -> display
+//     yMap = function(d) { return yScale(yValue(d));}, // data -> display
+//     yAxis = d3.svg.axis().scale(yScale).orient("left");
 
-// setup fill color
-var cValue = function(d) { return d.Manufacturer;},
-    color = d3.scale.category10();
+// // setup fill color
+// var cValue = function(d) { return d.Manufacturer;},
+//     color = d3.scale.category10();
 
 // add the graph canvas to the body of the webpage
 var svg = d3.select("body").append("svg")
@@ -73,21 +82,26 @@ var tooltip = d3.select("body").append("div")
     .style("opacity", 0);
 
 // load data
-d3.csv("data.json", function(json) {
+d3.csv("tsne.csv", function(data) {
 
-  var elem = svg.selectAll("g").data(json.nodes)
+  // don't want dots overlapping axis, so add in buffer to data domain
+
+  var elem = svg.selectAll("g").data(data)
 
   var elemEnter = elem.enter()
       .append("g")
-      .attr("transform", function(d){return "translate("+d.x+","+d.y+")"})
+      .attr("transform", function(d){return "translate("+convertX(d.x)+","+convertY(d.y)+")"})
 
+  var size = 15
   var circle = elemEnter.append("circle")
-      .attr("r", function(d){return 10})
+      .attr("r", function(d){return size})
       .attr("stroke","black")
       .attr("fill","white")
   elemEnter.append("text")
-      .attr("dx", function(d){return -20})
-      .text(function(d){return d.label})
+      .style("font-size",size+"px")
+      .attr("dx", function(d){return -size/2})
+      .attr("dy", function(d){return size/2})
+      .text(function(d){return d.character})
   // change string (from CSV) into number format
 //   data.forEach(function(d) {
 //     d.Calories = +d.Calories;
