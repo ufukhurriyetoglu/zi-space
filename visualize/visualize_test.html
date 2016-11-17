@@ -2,6 +2,9 @@
 <!DOCTYPE html>
 <!-- Run this to make it work http-server C:\Users\maxob\Documents\GitHub\zi-space\visualize -->
 <html>
+<head>
+<title>Visualization</title>
+</head>
 <meta charset="utf-8">
 
 <style>
@@ -11,9 +14,15 @@ body {
 
 </style>
 <body>
+<form>
+<input type="text" size="30" id="searchbar" onkeyup="findChar()">
+</form>
+
 <script src="http://d3js.org/d3.v4.min.js"></script>
 
-<script>
+<script type="text/javascript">
+
+
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -31,7 +40,8 @@ var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
 var g= svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("id","shell");
 
 svg.append("rect")
     .attr("width", width)
@@ -39,7 +49,7 @@ svg.append("rect")
     .style("fill", "none")
     .style("pointer-events", "all")
     .call(d3.zoom()
-        .scaleExtent([1 / 2, 8])
+        .scaleExtent([1 / 2, 16])
         .on("zoom", zoomed));
 
 // load data
@@ -50,24 +60,50 @@ d3.csv("tsne.csv", function(data) {
   var elemEnter = elem.enter()
       .append("g")
       .attr("transform", function(d){return "translate("+convertX(d.x)+","+convertY(d.y)+")"})
+      .attr("id", function(d){return d.character})
 
-  var size = 4
-  var circle = elemEnter.append("circle")
-      .attr("r", function(d){return size})
-      .attr("stroke","black")
-      .attr("fill","white")
+
+  var size = 2
   elemEnter.append("text")
       .style("font-size",size+"px")
       .attr("dx", function(d){return -size/2})
       .attr("dy", function(d){return size/2})
+      .attr("id", function(d){return d.character + "_text"})
       .text(function(d){return d.character})
 });
 
 function zoomed() {
-  console.log("zoomed!")
+  console.log(d3.event.transform);
   g.attr("transform", d3.event.transform);
 }
 
+
+function findChar(){
+  bar = document.getElementById("searchbar");
+  elem = document.getElementById(bar.value)
+  if(elem != null){
+    console.log(elem)
+    console.log(elem.transform.animVal[0].matrix.e)
+    var input = "translate(-"+ Math.round(16*(elem.transform.animVal[0].matrix.e) - 480) + ",-" + Math.round(16*elem.transform.animVal[0].matrix.f - 250) + ") scale(16)"
+    console.log(input)
+    gee = document.getElementById("shell")
+    console.log(gee.transform)
+    gee.setAttribute("transform", input)
+    console.log(gee.transform)
+    var element = document.getElementById(bar.value + "_text")
+    elem.style.border = "thick solid #000"
+    // setTimeout(function(){ element.style.color = "#000"}, 20000);
+
+
+  }
+
+  //Find character
+  //if found:
+  //Simulate mouse wheel scroll at that location
+  //first scroll out all the way
+  //Then scroll in all the way
+
+}
 
 
 </script>
