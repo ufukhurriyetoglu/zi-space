@@ -45,11 +45,11 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     height = 500 - margin.top - margin.bottom;
 
 function convertX(x) {
-  return   width / 200  * ( 100 + parseFloat(x))
+  return   width / 200  * ( 100 + 40 * parseFloat(x))
 }
 
 function convertY(y) {
-  return height / 200 * (100 + parseFloat(y)) + margin.top
+  return height / 200 * (100 + 40 * parseFloat(y)) + margin.top
 }
 
 
@@ -127,6 +127,7 @@ function findChar(){
         );
   }
 }
+
 
 
 </script>
